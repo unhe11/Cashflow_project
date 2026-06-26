@@ -46,13 +46,15 @@ pip install django
 ### 4. Создание файла requirements.txt
 
 ```bash
-pip install django
+pip freeze > requirements.txt
 ```
 
 ### 5. Настройка базы данных
 
 ```bash
-pip install django
+python manage.py makemigrations
+python manage.py migrate
+python manage.py load_initial_data
 ```
 
 ### 6. Создание суперпользователя (для доступа к админке)
@@ -64,6 +66,6 @@ python manage.py createsuperuser
 ### 7. Запуск сервера
 
 ```bash
-python manage.py createsuperuser
+python manage.py runserver
 ```
 Откройте браузер и перейдите по адресу: http://127.0.0.1:8000/
