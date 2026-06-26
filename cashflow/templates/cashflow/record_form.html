@@ -1,0 +1,162 @@
+{% extends 'cashflow/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-pen me-2"></i>{{ title }}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="recordForm">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.date.label_tag }}
+                                {{ form.date }}
+                                {% if form.date.errors %}
+                                    <div class="text-danger small">{{ form.date.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.status.label_tag }}
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                    <div class="text-danger small">{{ form.status.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.transaction_type.label_tag }}
+                                {{ form.transaction_type }}
+                                {% if form.transaction_type.errors %}
+                                    <div class="text-danger small">{{ form.transaction_type.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.category.label_tag }}
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                    <div class="text-danger small">{{ form.category.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.subcategory.label_tag }}
+                                {{ form.subcategory }}
+                                {% if form.subcategory.errors %}
+                                    <div class="text-danger small">{{ form.subcategory.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.amount.label_tag }}
+                                {{ form.amount }}
+                                {% if form.amount.errors %}
+                                    <div class="text-danger small">{{ form.amount.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.comment.label_tag }}
+                            {{ form.comment }}
+                            {% if form.comment.errors %}
+                                <div class="text-danger small">{{ form.comment.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'cashflow:index' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Назад
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>{{ button_text }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Динамическая загрузка категорий по типу
+        $('#id_transaction_type').change(function() {
+            var typeId = $(this).val();
+            if (typeId) {
+                $.ajax({
+                    url: "{% url 'cashflow:get_categories_by_type' %}",
+                    data: {
+                        'type_id': typeId
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        var select = $('#id_category');
+                        select.empty();
+                        select.append('<option value="">---------</option>');
+                        $.each(data, function(key, value) {
+                            select.append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                        // Сброс подкатегорий
+                        var subSelect = $('#id_subcategory');
+                        subSelect.empty();
+                        subSelect.append('<option value="">---------</option>');
+                    }
+                });
+            }
+        });
+        
+        // Динамическая загрузка подкатегорий по категории
+        $('#id_category').change(function() {
+            var categoryId = $(this).val();
+            if (categoryId) {
+                $.ajax({
+                    url: "{% url 'cashflow:get_subcategories_by_category' %}",
+                    data: {
+                        'category_id': categoryId
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        var select = $('#id_subcategory');
+                        select.empty();
+                        select.append('<option value="">---------</option>');
+                        $.each(data, function(key, value) {
+                            select.append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                    }
+                });
+            }
+        });
+        
+        // Автоматическая валидация на клиенте
+        $('#recordForm').on('submit', function(e) {
+            var amount = $('#id_amount').val();
+            if (amount && parseFloat(amount) <= 0) {
+                alert('Сумма должна быть больше нуля!');
+                e.preventDefault();
+                return false;
+            }
+        });
+    });
+</script>
+{% endblock %}

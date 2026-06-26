@@ -1,0 +1,137 @@
+{% extends 'cashflow/base.html' %}
+
+{% block title %}Управление справочниками{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h4 class="mb-4"><i class="fas fa-cog me-2"></i>Управление справочниками</h4>
+    
+    <!-- Статусы -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-tag me-2"></i>Статусы</span>
+            <a href="{% url 'cashflow:status_create' %}" class="btn btn-success btn-sm">
+                <i class="fas fa-plus me-1"></i>Добавить
+            </a>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for status in statuses %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ status.name }}
+                        <span>
+                            <a href="{% url 'cashflow:status_edit' status.id %}" class="btn btn-primary btn-sm btn-sm-custom">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'cashflow:status_delete' status.id %}" class="btn btn-danger btn-sm btn-sm-custom">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Нет статусов</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Типы -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-exchange-alt me-2"></i>Типы транзакций</span>
+            <a href="{% url 'cashflow:type_create' %}" class="btn btn-success btn-sm">
+                <i class="fas fa-plus me-1"></i>Добавить
+            </a>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for type in types %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ type.name }}
+                        <span>
+                            <a href="{% url 'cashflow:type_edit' type.id %}" class="btn btn-primary btn-sm btn-sm-custom">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'cashflow:type_delete' type.id %}" class="btn btn-danger btn-sm btn-sm-custom">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Нет типов</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Категории -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-folder me-2"></i>Категории</span>
+            <a href="{% url 'cashflow:category_create' %}" class="btn btn-success btn-sm">
+                <i class="fas fa-plus me-1"></i>Добавить
+            </a>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for category in categories %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            {{ category.name }}
+                            <small class="text-muted ms-2">({{ category.transaction_type.name }})</small>
+                        </span>
+                        <span>
+                            <a href="{% url 'cashflow:category_edit' category.id %}" class="btn btn-primary btn-sm btn-sm-custom">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'cashflow:category_delete' category.id %}" class="btn btn-danger btn-sm btn-sm-custom">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Нет категорий</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Подкатегории -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-folder-open me-2"></i>Подкатегории</span>
+            <a href="{% url 'cashflow:subcategory_create' %}" class="btn btn-success btn-sm">
+                <i class="fas fa-plus me-1"></i>Добавить
+            </a>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for subcategory in subcategories %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            {{ subcategory.name }}
+                            <small class="text-muted ms-2">({{ subcategory.category.name }})</small>
+                        </span>
+                        <span>
+                            <a href="{% url 'cashflow:subcategory_edit' subcategory.id %}" class="btn btn-primary btn-sm btn-sm-custom">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'cashflow:subcategory_delete' subcategory.id %}" class="btn btn-danger btn-sm btn-sm-custom">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Нет подкатегорий</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <div class="mt-3">
+        <a href="{% url 'cashflow:index' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>На главную
+        </a>
+    </div>
+</div>
+{% endblock %}
